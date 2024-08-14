@@ -59,7 +59,8 @@ class Cpab:
         self.backend_name = backend
 
         # Load backend and set device
-        self.device = device.lower()
+        # self.device = device.lower()
+        self.device = device
         self.backend_name = backend
         if self.backend_name == "numpy":
             from .backend.numpy import functions as backend
@@ -566,7 +567,7 @@ class Cpab:
 
         assert tess_size > 1, """tess size must be > 1"""
         assert backend in ["numpy", "pytorch",], """Unknown backend, choose between 'numpy' or 'pytorch' """
-        assert device in ["cpu", "gpu",], """Unknown device, choose between 'cpu' or 'gpu' """
+        assert device in ["cpu", "gpu",] or "cuda" in device.type, """Unknown device, choose between 'cpu' or 'gpu' """
         if backend == "numpy":
             assert device == "cpu", """Cannot use gpu with numpy backend """
         assert type(zero_boundary) == bool, """Argument zero_boundary must be True or False"""

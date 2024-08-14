@@ -24,6 +24,8 @@ double = torch.float64
 def to(x, dtype=torch.float32, device=None):
     if type(device) == str:
         device = torch.device("cuda") if device == "gpu" else torch.device("cpu")
+    elif isinstance(device, torch.device):
+        device = device
     if torch.is_tensor(x):
         return x.detach().clone().type(dtype).to(device)
     return torch.tensor(x, dtype=dtype, device=device)
@@ -36,7 +38,10 @@ def tonumpy(x):
 
 # %%
 def check_device(x, device_name):
-    return (x.is_cuda) == (device_name == "gpu")
+    if type(device_name) == str:
+        return (x.is_cuda) == (device_name == "gpu")
+    else:
+        return x.is_cuda
 
 
 # %%
@@ -46,7 +51,10 @@ def backend_type():
 
 # %%
 def sample_transformation(d, n_sample=1, mean=None, cov=None, device="cpu"):
-    device = torch.device("cpu") if device == "cpu" else torch.device("cuda")
+    if type(device) == str:
+        device = torch.device("cpu") if device == "cpu" else torch.device("cuda")
+    else:
+        device = device
     mean = torch.zeros(d, dtype=torch.float32, device=device) if mean is None else mean
     cov = torch.eye(d, dtype=torch.float32, device=device) if cov is None else cov
     distribution = torch.distributions.MultivariateNormal(mean, cov)
@@ -56,13 +64,19 @@ def sample_transformation(d, n_sample=1, mean=None, cov=None, device="cpu"):
 # %%
 def identity(d, n_sample=1, epsilon=0, device="cpu"):
     assert epsilon >= 0, "epsilon need to be larger than 0"
-    device = torch.device("cpu") if device == "cpu" else torch.device("cuda")
+    if type(device) == str:
+        device = torch.device("cpu") if device == "cpu" else torch.device("cuda")
+    else:
+        device = device
     return torch.zeros(n_sample, d, dtype=torch.float32, device=device) + epsilon
 
 
 # %%
 def uniform_meshgrid(xmin, xmax, n_points, device="cpu"):
-    device = torch.device("cpu") if device == "cpu" else torch.device("cuda")
+    if type(device) == str:
+        device = torch.device("cpu") if device == "cpu" else torch.device("cuda")
+    else:
+        device = device
     return torch.linspace(xmin, xmax, n_points, dtype=torch.float32, device=device)
 
 
